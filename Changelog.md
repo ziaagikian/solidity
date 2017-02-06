@@ -1,6 +1,7 @@
 ### 0.4.14 (unreleased)
 
 Features:
+ * Inline assembly: Support bitwise shift operators (EIP145).
 
 Bugfixes:
  * Type Checker: Fix invalid "specify storage keyword" warning for reference members of structs.
