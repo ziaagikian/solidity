@@ -9,6 +9,7 @@ Features:
  * Metadata: Store experimental flag in metadata CBOR.
  * Type Checker: More detailed error message for invalid overrides.
  * Type Checker: Warn about shifting a literal.
+ * Standard JSON: Support the ``outputSelection`` field for selective compilation.
 
 Bugfixes:
  * Assembly Parser: Be more strict about number literals.
