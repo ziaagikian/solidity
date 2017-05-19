@@ -27,6 +27,10 @@
 #include <libsolidity/ast/ASTJsonConverter.h>
 #include <libsolidity/ast/ASTJsonImporter.h>
 
+//4 debugging
+#include <iostream>
+#include <fstream>
+
 using namespace std;
 
 namespace dev
