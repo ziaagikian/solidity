@@ -26,11 +26,11 @@
 #include <libsolidity/interface/CompilerStack.h>
 #include <libsolidity/ast/ASTJsonConverter.h>
 #include <libsolidity/ast/ASTJsonImporter.h>
+#include "../Metadata.h"
 
-//4 debugging
+//debugging
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 
 namespace dev
@@ -280,6 +280,11 @@ BOOST_AUTO_TEST_CASE(documentation)
 //	c.reset(false);
 //	bool import = c.importASTs(tmp);
 
+//c.compile();
+//	Json::Value originalJson = ASTJsonConverter(false, c.sourceIndices()).toJson(c.ast("a"));
+//	string originalBinary = dev::test::bytecodeSansMetadata(c.object(c.contractNames()[0]).toHex());
+//>>>>>>> astAssert-error and import-testcase
+
 //use importer to transform json to ast and back again:
 	//first build the ast without scopes and types
 //	map<string, Json::Value const*> sourceList;
@@ -328,6 +333,27 @@ BOOST_AUTO_TEST_CASE(documentation)
 
 
 //}
+
+//	map<string, Json::Value const*> sourceList;
+//	sourceList["a"] = &originalJson;
+//	//reset compiler and import
+//	c.reset(false);
+//	c.importASTs(sourceList);
+//	//use the compiler's analyzer to annotate, typecheck, etc...
+//	c.analyze();
+//	c.compile();
+//	//compare exported-json and bytecode
+//	Json::Value newJson = ASTJsonConverter(false, c.sourceIndices()).toJson(c.ast("a"));
+//	string newBinary = dev::test::bytecodeSansMetadata(c.object(c.contractNames()[0]).toHex());
+//	assert(newJson == originalJson);
+//	// Note: Bytecode comparison will only succeed if the contracts don't import/inherit other contracts, because
+//	// the other contract's bytecode will contain it's metadata, whose 'source'-field is generated from the solidity-code
+//	// and after importing will be generated from the Solidity-AST.
+//	// In order to test more complicated contracts, the bytecodeSansMetadata-function needs to be extended to
+//	// also remove metadatabytecode not only from the end but also from the middle of a given string.
+//	assert(newBinary == originalBinary);
+//}
+//>>>>>>> astAssert-error and import-testcase
 
 BOOST_AUTO_TEST_SUITE_END()
 
