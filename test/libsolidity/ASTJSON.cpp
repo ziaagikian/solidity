@@ -259,11 +259,33 @@ BOOST_AUTO_TEST_CASE(documentation)
 	astJsonB = ASTJsonConverter(false, sourceIndices).toJson(c.ast("b"));
 	documentationB = astJsonB["nodes"][0]["documentation"];
 	BOOST_CHECK_EQUAL(documentationB, "This contract is empty and has a line-breaking comment.");
-
 }
 
 
 //BOOST_AUTO_TEST_CASE(importAST)
+////USE THIS FORMHERE
+////use importer to transform json to ast and back again:
+////first build the ast without scopes and types
+//map<string, Json::Value const*> sourceList;
+//sourceList["a"] = &originalJson;
+////reset compiler and import
+//c.reset(false);
+//c.importASTs(sourceList);
+////use the compiler's analyzer to annotate, typecheck, etc...
+//c.analyze();
+//c.compile();
+////compare exported-json and bytecode
+//Json::Value newJson = ASTJsonConverter(false, c.sourceIndices()).toJson(c.ast("a"));
+//string newBinary = dev::test::bytecodeSansMetadata(c.object(c.contractNames()[0]).toHex());
+//assert(newJson == originalJson);
+//// Note: This Bytecode comparison will only succeed if the "a" doesn't import/inherit other contracts
+//// In that case the other contract's bytecode will contain its metadata, whose 'source'-field is generated from the solidity-code
+//// and after importing will be generated from the Solidity-AST.
+//// In order to test more complicated contracts, the bytecodeSansMetadata-function needs to be extended to
+//// also remove metadatabytecode not only from the end but also from the middle of a given string.
+//assert(newBinary == originalBinary);
+//		//TOHERE
+
 
 //=======
 //	//SourceUnit const& originalAst = c.ast();
