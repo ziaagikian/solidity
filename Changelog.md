@@ -1,10 +1,11 @@
-### 0.4.12 (unreleased)
+
+	### 0.4.12 (unreleased)
 
 Features:
  * Assembly: renamed ``SHA3`` to ``KECCAK256``.
  * Assembly: Display auxiliary data in the assembly output.
  * Assembly: Add ``CREATE2`` (EIP86), ``STATICCALL`` (EIP214), ``RETURNDATASIZE`` and ``RETURNDATACOPY`` (EIP211) instructions.
- * AST: export all attributes to JSON format.
+ * AST: import/export the AST from/to Json format
  * Type Checker: Warn about type inference from literal numbers.
  * C API (``jsonCompiler``): Use the Standard JSON I/O internally.
  * Inline Assembly: Present proper error message when not supplying enough arguments to a functional
