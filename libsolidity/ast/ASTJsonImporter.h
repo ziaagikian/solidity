@@ -101,9 +101,9 @@ private:
 
 	template<class T>
 	ASTPointer<T> nullOrCast(Json::Value _json);
-	Json::Value member(Json::Value const& _node, std::string _name);
-	ASTPointer<ASTString> memberAsASTString(Json::Value const& _node, std::string _name);
-	bool memberAsBool(Json::Value const& _node, std::string _name);
+	Json::Value member(Json::Value const& _node, std::string const& _name);
+	ASTPointer<ASTString> memberAsASTString(Json::Value const& _node, std::string const& _name);
+	bool memberAsBool(Json::Value const& _node, std::string const& _name);
 	Declaration::Visibility visibility(Json::Value const& _node);
 	VariableDeclaration::Location location(Json::Value const& _node);
 	ContractDefinition::ContractKind contractKind(Json::Value const& _node);
