@@ -860,14 +860,14 @@ bool CommandLineInterface::processInput()
 		if (successful && m_args.count(g_argFormal))
 			if (!m_compiler->prepareFormalAnalysis())
 				successful = false;
-		if (!m_compiler->importedSources())
-			for (auto const& error: m_compiler->errors())
-				SourceReferenceFormatter::printExceptionInformation(
-					cerr,
-					*error,
-					(error->type() == Error::Type::Warning) ? "Warning" : "Error",
-					scannerFromSourceName
-				);
+
+		for (auto const& error: m_compiler->errors())
+			SourceReferenceFormatter::printExceptionInformation(
+				cerr,
+				*error,
+				(error->type() == Error::Type::Warning) ? "Warning" : "Error",
+				scannerFromSourceName
+			);
 
 		if (!successful)
 			return false;

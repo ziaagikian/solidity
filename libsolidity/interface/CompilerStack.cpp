@@ -812,7 +812,7 @@ string CompilerStack::createOnChainMetadata(Contract const& _contract) const
 	meta["sources"] = Json::objectValue;
 	for (auto const& s: m_sources)
 	{
-		solAssert(s.second.scanner,"");
+		solAssert(s.second.scanner, "Scanner not available");
 		meta["sources"][s.first]["keccak256"] =
 			"0x" + toHex(dev::keccak256(s.second.scanner->source()).asBytes());
 		if (m_metadataLiteralSources)
