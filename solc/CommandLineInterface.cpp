@@ -439,6 +439,65 @@ void CommandLineInterface::readInputFilesAndConfigureRemappings()
 	}
 }
 
+//read file contents, which either are
+// a) a json-file with multiple sources (as produced by --combined-json)
+// b) a literal metadata-json-file with SolidityAST as language (as produced by --metadata --metadata-literal --import-ast)
+// c) a json-file with one source only (as produced --ast-combined-json)
+map<string, Json::Value const*> CommandLineInterface::parseAstFromInput()
+{
+	map<string, Json::Value const*> sourceJsons;
+	map<string, string> tmp_sources; //used to generate the onchainmetadata-hash
+	Json::Reader reader;
+	for (auto const& srcPair: m_sourceCodes) // aka <string, string>
+	{
+		Json::Value* ast = new Json::Value(); //use shared-Pointer here?
+		// try parsing as json
+		if (reader.parse(srcPair.second, *ast, false))
+		{
+			//case a)
+			if ((*ast).isMember("sourceList") && (*ast).isMember("sources"))
+			{
+				for (auto& src: (*ast)["sourceList"])
+				{
+					astAssert( (*ast)["sources"][src.asString()]["AST"]["nodeType"].asString() == "SourceUnit",  "Top-level node should be a 'SourceUnit'");
+					sourceJsons[src.asString()] = &((*ast)["sources"][src.asString()]["AST"]);
+					tmp_sources[src.asString()] = dev::jsonCompactPrint(*ast);
+				}
+			}
+			// case b)
+			else if ((*ast).isMember("language") && (*ast)["language"] == "SolidityAST")
+			{
+				for (auto const& filename: (*ast)["sources"].getMemberNames())
+				{
+					Json::Value* ast2 = new Json::Value();
+					string sourceString = (*ast)["sources"][filename]["content"].asString();
+					if (reader.parse(sourceString, *ast2, false))
+					{
+						string srcName = (*ast2)["absolutePath"].asString();
+						sourceJsons[srcName] = ast2;
+						tmp_sources[srcName] = sourceString;
+					}
+					else
+						BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Source from metadata-file could not be parsed to JSON"));
+				}
+			}
+			// case c)
+			else
+			{
+				astAssert((*ast)["nodeType"] == "SourceUnit", "Top-level node should be a 'SourceUnit'");
+				string srcName = (*ast)["absolutePath"].asString();
+				sourceJsons[srcName] = ast;
+				tmp_sources[srcName] = srcPair.second;
+			}
+		}
+		else
+			BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Input file could not be parsed to JSON"));
+	}
+	//replace the internal map so that every source has its own entry
+	m_sourceCodes = tmp_sources;
+	return sourceJsons;
+}
+
 bool CommandLineInterface::parseLibraryOption(string const& _input)
 {
 	namespace fs = boost::filesystem;
@@ -783,66 +842,11 @@ bool CommandLineInterface::processInput()
 
 		if (m_args.count(g_argImportAst))
 		{
-			//read file contents, which either are
-			// a) a json-file with multiple sources (as produced by --combined-json)
-			// b) a literal metadata-json-file with SolidityAST as language (as produced by --metadata --metadata-literal --import-ast)
-			// c) a json-file with one source only (as produced --ast-combined-json)
-			Json::Reader reader;
-			map<string, Json::Value const*> sourceJsons; // will be given to the compilerimportfunction
-			map<string, string> tmp_sources; //used to generate the onchainmetadata-hash
-			map<string, string> supplementarySourceCodes;
-			for (auto const& srcPair: m_sourceCodes) // aka <string, string>
-			{
-				Json::Value* ast = new Json::Value(); //use shared-Pointer here?
-				// try parsing as json
-				if (reader.parse(srcPair.second, *ast, false))
-				{
-					//case a)
-					if ((*ast).isMember("sourceList") && (*ast).isMember("sources"))
-					{
-						for (auto& src: (*ast)["sourceList"])
-						{
-							astAssert( (*ast)["sources"][src.asString()]["AST"]["nodeType"].asString() == "SourceUnit",  "Top-level node should be a 'SourceUnit'");
-							sourceJsons[src.asString()] = &((*ast)["sources"][src.asString()]["AST"]);
-							tmp_sources[src.asString()] = dev::jsonCompactPrint(*ast);
-						}
-					}
-					// case b)
-					else if ((*ast).isMember("language") && (*ast)["language"] == "SolidityAST")
-					{
-						for (auto const& filename: (*ast)["sources"].getMemberNames())
-						{
-							Json::Value* ast2 = new Json::Value();
-							string sourceString = (*ast)["sources"][filename]["content"].asString();
-							if (reader.parse(sourceString, *ast2, false))
-							{
-								string srcName = (*ast2)["absolutePath"].asString();
-								sourceJsons[srcName] = ast2;
-								tmp_sources[srcName] = sourceString;
-							}
-							else
-								BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Source from metadata-file could not be parsed to JSON"));
-						}
-					}
-					// case c)
-					else
-					{
-						astAssert((*ast)["nodeType"] == "SourceUnit", "Top-level node should be a 'SourceUnit'");
-						string srcName = (*ast)["absolutePath"].asString();
-						sourceJsons[srcName] = ast;
-						tmp_sources[srcName] = srcPair.second;
-					}
-				}
-				else
-					BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Input file could not be parsed to JSON"));
-			}
-			//replace the internal map so that every source has its own entry
-			m_sourceCodes = tmp_sources;
+			map<string, Json::Value const*> sourceJsons = parseAstFromInput();
 			//feed AST to compiler
 			m_compiler->reset(false);
-			bool import = m_compiler->importASTs(sourceJsons);
 			//use the compiler's analyzer to annotate, typecheck, etc...
-			if (!import)
+			if (!m_compiler->importASTs(sourceJsons))
 				BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Import of the AST failed"));
 			if (!m_compiler->analyze())
 				BOOST_THROW_EXCEPTION(InvalidAstError() << errinfo_comment("Analysis of the AST failed"));

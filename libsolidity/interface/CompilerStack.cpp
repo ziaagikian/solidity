@@ -656,8 +656,8 @@ void CompilerStack::resolveImports()
 			if (ImportDirective const* import = dynamic_cast<ImportDirective*>(node.get()))
 			{
 				string const& path = import->annotation().absolutePath;
-				solAssert(!path.empty(), "sdfsdfsdf");
-				solAssert(m_sources.count(path), "sdfsf");
+				solAssert(!path.empty(), "");
+				solAssert(m_sources.count(path), "");
 				import->annotation().sourceUnit = m_sources[path].ast.get();
 				toposort(&m_sources[path]);
 			}
@@ -798,7 +798,6 @@ CompilerStack::Source const& CompilerStack::source(string const& _sourceName) co
 	auto it = m_sources.find(_sourceName);
 	if (it == m_sources.end())
 		BOOST_THROW_EXCEPTION(CompilerError() << errinfo_comment("Given source file not found."));
-
 	return it->second;
 }
 
@@ -808,7 +807,6 @@ string CompilerStack::createOnChainMetadata(Contract const& _contract) const
 	meta["version"] = 1;
 	meta["language"] = m_importedSources ? "SolidityAST" : "Solidity";
 	meta["compiler"]["version"] = VersionStringStrict;
-
 	meta["sources"] = Json::objectValue;
 	for (auto const& s: m_sources)
 	{
@@ -826,10 +824,12 @@ string CompilerStack::createOnChainMetadata(Contract const& _contract) const
 		}
 
 	}
+
 	meta["settings"]["optimizer"]["enabled"] = m_optimize;
 	meta["settings"]["optimizer"]["runs"] = m_optimizeRuns;
 	meta["settings"]["compilationTarget"][_contract.contract->sourceUnitName()] =
 		_contract.contract->annotation().canonicalName;
+
 	meta["settings"]["remappings"] = Json::arrayValue;
 	set<string> remappings;
 	for (auto const& r: m_remappings)

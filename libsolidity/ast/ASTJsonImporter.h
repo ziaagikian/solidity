@@ -101,6 +101,7 @@ private:
 
 	template<class T>
 	ASTPointer<T> nullOrCast(Json::Value _json);
+	ASTPointer<ASTString> nullOrASTString(Json::Value _json, std::string const& _name);
 	Json::Value member(Json::Value const& _node, std::string const& _name);
 	ASTPointer<ASTString> memberAsASTString(Json::Value const& _node, std::string const& _name);
 	bool memberAsBool(Json::Value const& _node, std::string const& _name);
