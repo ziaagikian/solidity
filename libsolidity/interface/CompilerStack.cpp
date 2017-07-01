@@ -290,8 +290,9 @@ bool CompilerStack::importASTs(map<string, Json::Value const*> const& _sources)
 		string const& path = src.first;
 		Source source;
 		source.ast = src.second;
-		string srcString = dev::jsonCompactPrint(*m_sourceJsons[path]);
-		ASTPointer<Scanner> scanner = make_shared<Scanner>(CharStream(srcString), path);
+//		ASTPointer<Scanner> scanner = make_shared<Scanner>(CharStream("todo"));
+		string srcString = dev::jsonCompactPrint(*m_sourceJsons[src.first]);
+		ASTPointer<Scanner> scanner = make_shared<Scanner>(CharStream(srcString), src.first);
 		source.scanner = scanner;
 		m_sources[path] = source;
 	}
@@ -656,8 +657,8 @@ void CompilerStack::resolveImports()
 			if (ImportDirective const* import = dynamic_cast<ImportDirective*>(node.get()))
 			{
 				string const& path = import->annotation().absolutePath;
-				solAssert(!path.empty(), "");
-				solAssert(m_sources.count(path), "");
+				solAssert(!path.empty(), "sdfsdfsdf");
+				solAssert(m_sources.count(path), "sdfsf");
 				import->annotation().sourceUnit = m_sources[path].ast.get();
 				toposort(&m_sources[path]);
 			}
@@ -798,6 +799,7 @@ CompilerStack::Source const& CompilerStack::source(string const& _sourceName) co
 	auto it = m_sources.find(_sourceName);
 	if (it == m_sources.end())
 		BOOST_THROW_EXCEPTION(CompilerError() << errinfo_comment("Given source file not found."));
+
 	return it->second;
 }
 
@@ -807,10 +809,11 @@ string CompilerStack::createOnChainMetadata(Contract const& _contract) const
 	meta["version"] = 1;
 	meta["language"] = m_importedSources ? "SolidityAST" : "Solidity";
 	meta["compiler"]["version"] = VersionStringStrict;
+
 	meta["sources"] = Json::objectValue;
 	for (auto const& s: m_sources)
 	{
-		solAssert(s.second.scanner, "Scanner not available");
+		solAssert(s.second.scanner,"");
 		meta["sources"][s.first]["keccak256"] =
 			"0x" + toHex(dev::keccak256(s.second.scanner->source()).asBytes());
 		if (m_metadataLiteralSources)
@@ -824,12 +827,10 @@ string CompilerStack::createOnChainMetadata(Contract const& _contract) const
 		}
 
 	}
-
 	meta["settings"]["optimizer"]["enabled"] = m_optimize;
 	meta["settings"]["optimizer"]["runs"] = m_optimizeRuns;
 	meta["settings"]["compilationTarget"][_contract.contract->sourceUnitName()] =
 		_contract.contract->annotation().canonicalName;
-
 	meta["settings"]["remappings"] = Json::arrayValue;
 	set<string> remappings;
 	for (auto const& r: m_remappings)

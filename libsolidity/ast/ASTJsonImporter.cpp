@@ -66,6 +66,7 @@ map<string, ASTPointer<SourceUnit>> ASTJsonImporter::jsonToSourceUnit()
 	{
 		astAssert(!srcPair.second->isNull(), "");
 		astAssert(member(*srcPair.second,"nodeType") == "SourceUnit", "The 'nodeType' of the highest node must be 'SourceUnit'.");
+		m_currentSourceName = srcPair.first;
 		m_sourceUnits[srcPair.first] =  createSourceUnit(*srcPair.second, srcPair.first);
 	}
 	return m_sourceUnits;
@@ -499,7 +500,10 @@ ASTPointer<InlineAssembly> ASTJsonImporter::createInlineAssembly(Json::Value con
 	ErrorList tmp_list;
 	ErrorReporter tmp_error(tmp_list);
 	assembly::Parser asmParser(tmp_error);
-	shared_ptr<Scanner> scanner = make_shared<Scanner>(CharStream(member(_node, "operations").asString()), "");
+	shared_ptr<Scanner> scanner = make_shared<Scanner>(
+		CharStream( member(_node, "operations").asString()),
+		m_currentSourceName
+	);
 	std::shared_ptr<assembly::Block> operations = asmParser.parse(scanner);
 	return createASTNode<InlineAssembly>(
 		_node,

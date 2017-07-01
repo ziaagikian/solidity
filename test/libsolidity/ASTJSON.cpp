@@ -317,7 +317,6 @@ BOOST_AUTO_TEST_CASE(documentation)
 //	map<string, shared_ptr<SourceUnit>> tmp;
 //	tmp["a"] = shared_ptr<SourceUnit>(newPartialAST);
 //	bool import = c.importASTs(reconstructedSources);
->>>>>>> option to supplement ast-json with sol-srcCode for metadatahash
 ////	//use the compiler's analyzer to annotate, typecheck, etc...
 //	if (import)
 //		c.analyze();

@@ -861,10 +861,6 @@ bool CommandLineInterface::processInput()
 		unsigned runs = m_args[g_argOptimizeRuns].as<unsigned>();
 		bool successful = m_compiler->compile(optimize, runs, m_libraries);
 
-		if (successful && m_args.count(g_argFormal))
-			if (!m_compiler->prepareFormalAnalysis())
-				successful = false;
-
 		for (auto const& error: m_compiler->errors())
 			SourceReferenceFormatter::printExceptionInformation(
 				cerr,
@@ -872,7 +868,6 @@ bool CommandLineInterface::processInput()
 				(error->type() == Error::Type::Warning) ? "Warning" : "Error",
 				scannerFromSourceName
 			);
-
 		if (!successful)
 			return false;
 	}
