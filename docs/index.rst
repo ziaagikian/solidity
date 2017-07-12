@@ -146,6 +146,7 @@ Contents
    using-the-compiler.rst
    metadata.rst
    abi-spec.rst
+   julia.rst
    style-guide.rst
    common-patterns.rst
    bugs.rst
