@@ -935,7 +935,7 @@ BOOST_AUTO_TEST_CASE(modifier_overrides_function)
 	)";
 	// Error: Identifier already declared.
 	// Error: Override changes modifier to function.
-	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Identifier already declared.");
+	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Override changes modifier to functions.");
 }
 
 BOOST_AUTO_TEST_CASE(function_overrides_modifier)
@@ -946,7 +946,7 @@ BOOST_AUTO_TEST_CASE(function_overrides_modifier)
 	)";
 	// Error: Identifier already declared.
 	// Error: Override changes function to modifier.
-	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Identifier already declared.");
+	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Override changes function to modifier.");
 }
 
 BOOST_AUTO_TEST_CASE(modifier_returns_value)
@@ -1183,7 +1183,7 @@ BOOST_AUTO_TEST_CASE(fallback_function_twice)
 			function() { x = 3; }
 		}
 	)";
-	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Function with same name and arguments defined twice.");
+	CHECK_ERROR_ALLOW_MULTI(text, DeclarationError, "Only one fallback function is allowed.");
 }
 
 BOOST_AUTO_TEST_CASE(fallback_function_inheritance)
@@ -6513,11 +6513,11 @@ BOOST_AUTO_TEST_CASE(experimental_pragma)
 		pragma experimental __test;
 	)";
 	CHECK_WARNING(text, "Experimental features are turned on. Do not use experimental features on live deployments.");
-//	text = R"(
-//		pragma experimental __test;
-//		pragma experimental __test;
-//	)";
-//	CHECK_ERROR_ALLOW_MULTI(text, SyntaxError, "Duplicate experimental feature name.");
+	text = R"(
+		pragma experimental __test;
+		pragma experimental __test;
+	)";
+	CHECK_ERROR_ALLOW_MULTI(text, SyntaxError, "Duplicate experimental feature name.");
 }
 
 BOOST_AUTO_TEST_CASE(reject_interface_creation)
