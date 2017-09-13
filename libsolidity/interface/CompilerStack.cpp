@@ -262,7 +262,9 @@ bool CompilerStack::compile()
 	for (Source const* source: m_sourceOrder)
 		for (ASTPointer<ASTNode> const& node: source->ast->nodes())
 			if (auto contract = dynamic_cast<ContractDefinition const*>(node.get()))
-				compileContract(*contract, compiledContracts);
+				/// Only compile if contract name is requested or no set is supplied.
+				if (m_requestedContractNames.empty() || m_requestedContractNames.count(contract->name()))
+					compileContract(*contract, compiledContracts);
 	this->link();
 	m_stackState = CompilationSuccessful;
 	return true;

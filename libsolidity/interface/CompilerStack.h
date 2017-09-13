@@ -116,6 +116,12 @@ public:
 		m_optimizeRuns = _runs;
 	}
 
+	/// Sets the list of requested contract names. Names are cleared iff @a _contractNames is missing.
+	void setRequestedContractNames(std::set<std::string> const& _contractNames = std::set<std::string>{})
+	{
+		m_requestedContractNames = _contractNames;
+	}
+
 	/// @arg _metadataLiteralSources When true, store sources as literals in the contract metadata.
 	void useMetadataLiteralSources(bool _metadataLiteralSources) { m_metadataLiteralSources = _metadataLiteralSources; }
 
@@ -297,6 +303,7 @@ private:
 	ReadCallback::Callback m_smtQuery;
 	bool m_optimize = false;
 	unsigned m_optimizeRuns = 200;
+	std::set<std::string> m_requestedContractNames;
 	std::map<std::string, h160> m_libraries;
 	/// list of path prefix remappings, e.g. mylibrary: github.com/ethereum = /usr/local/ethereum
 	/// "context:prefix=target"
