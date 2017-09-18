@@ -14,6 +14,7 @@ Features:
  * Type Checker: Enforce ``view`` and ``pure``.
  * Type Checker: Enforce ``view`` / ``constant`` with error as experimental 0.5.0 feature.
  * Type Checker: Enforce fallback functions to be ``external`` as experimental 0.5.0 feature.
+ * Type Checker: Validate each number literal in tuple expressions even if they are not assigned from.
 
 Bugfixes:
  * ABI JSON: Include all overloaded events.
