@@ -6928,6 +6928,16 @@ BOOST_AUTO_TEST_CASE(non_external_fallback)
 	CHECK_ERROR(text, TypeError, "Fallback function must be defined as \"external\".");
 }
 
+BOOST_AUTO_TEST_CASE(array_length_validation)
+{
+	char const* text = R"(
+		contract C {
+			uint[8**90] ids;
+		}
+	)";
+	CHECK_ERROR(text, TypeError, "Array length is too large (270 bits): \"189");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }
