@@ -6928,6 +6928,29 @@ BOOST_AUTO_TEST_CASE(non_external_fallback)
 	CHECK_ERROR(text, TypeError, "Fallback function must be defined as \"external\".");
 }
 
+BOOST_AUTO_TEST_CASE(address_overload_resolution)
+{
+	char const* text = R"(
+		contract C {
+			function balance() returns (uint) {
+				this.balance; // to avoid pureness warning
+				return 1;
+			}
+			function transfer(uint amount) {
+				address(this).transfer(amount); // to avoid pureness warning
+			}
+		}
+		contract D {
+			function f() {
+				var x = (new C()).balance();
+				x;
+				(new C()).transfer(5);
+			}
+		}
+	)";
+	CHECK_SUCCESS(text);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }

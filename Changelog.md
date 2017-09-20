@@ -14,6 +14,7 @@ Features:
  * Type Checker: Enforce ``view`` and ``pure``.
  * Type Checker: Enforce ``view`` / ``constant`` with error as experimental 0.5.0 feature.
  * Type Checker: Enforce fallback functions to be ``external`` as experimental 0.5.0 feature.
+ * Type Checker: Overload resolution should work with builtins of ``address``.
 
 Bugfixes:
  * ABI JSON: Include all overloaded events.
