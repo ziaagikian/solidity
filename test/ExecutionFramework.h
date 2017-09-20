@@ -131,6 +131,8 @@ public:
 		}
 	}
 
+	static std::pair<bool, std::string> compareAndCreateMessage(bytes const& _result, bytes const& _expectation);
+
 	static bytes encode(bool _value) { return encode(byte(_value)); }
 	static bytes encode(int _value) { return encode(u256(_value)); }
 	static bytes encode(size_t _value) { return encode(u256(_value)); }
@@ -292,6 +294,12 @@ protected:
 	std::vector<LogEntry> m_logs;
 	u256 m_gasUsed;
 };
+
+#define ABI_CHECK(RESULT, EXPECTATION) do { \
+	auto abiCheckResult = ExecutionFramework::compareAndCreateMessage((RESULT), (EXPECTATION)); \
+	BOOST_CHECK_MESSAGE(abiCheckResult.first, abiCheckResult.second); \
+} while (0)
+
 
 }
 } // end namespaces
