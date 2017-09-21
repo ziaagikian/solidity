@@ -21,6 +21,20 @@
  * Very common stuff (i.e. that every other header needs except vector_ref.h).
  */
 
+#ifndef __has_cpp_attribute
+#define __has_cpp_attribute(x) 0
+#endif
+
+#if __has_cpp_attribute(fallthrough)
+#define FALLTHROUGH [[fallthrough]]
+#elif __has_cpp_attribute(gnu::fallthrough)
+#define FALLTHROUGH [[gnu::fallthrough]]
+#elif __has_cpp_attribute(clang::fallthrough)
+#define FALLTHROUGH [[clang::fallthrough]]
+#else
+#define FALLTHROUGH (void)0
+#endif
+
 #pragma once
 
 // way too many unsigned to size_t warnings in 32 bit build

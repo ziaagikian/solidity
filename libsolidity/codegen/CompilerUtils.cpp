@@ -823,8 +823,8 @@ void CompilerUtils::convertType(
 			m_context << Instruction::POP;
 			break;
 		}
+		FALLTHROUGH;
 	}
-	// fall-through
 	default:
 		// All other types should not be convertible to non-equal types.
 		solAssert(_typeOnStack == _targetType, "Invalid type conversion requested.");
