@@ -8,10 +8,13 @@ include(EthPolicy)
 eth_policy()
 
 # project name and version should be set after cmake_policy CMP0048
-set(PROJECT_VERSION "0.4.17")
+set(PROJECT_VERSION "0.4.18")
 project(solidity VERSION ${PROJECT_VERSION})
 
 option(SOLC_LINK_STATIC "Link solc executable statically on supported platforms" OFF)
+
+# Setup cccache.
+include(EthCcache)
 
 # Let's find our dependencies
 include(EthDependencies)
