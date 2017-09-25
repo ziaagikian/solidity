@@ -315,20 +315,20 @@ void CompilerContext::appendInlineAssembly(
 	auto parserResult = assembly::Parser(errorReporter).parse(scanner);
 	if (!parserResult || !errorReporter.errors().empty())
 	{
-		cerr << "Error parsing inline assembly block:" << endl;
-		cerr << "------------------ Input: -----------------" << endl;
-		cerr << _assembly << endl;
-		cerr << "------------------ Errors: ----------------" << endl;
+		string message =
+			"Error parsing inline assembly block:\n"
+			"------------------ Input: -----------------\n" +
+			_assembly + "\n"
+			"------------------ Errors: ----------------\n";
 		for (auto const& error: errorReporter.errors())
-			SourceReferenceFormatter::printExceptionInformation(
-				cerr,
+			message += SourceReferenceFormatter::formatExceptionInformation(
 				*error,
 				(error->type() == Error::Type::Warning) ? "Warning" : "Error",
 				[&](string const&) -> Scanner const& { return *scanner; }
 			);
-		cerr << "-------------------------------------------" << endl;
+		message += "-------------------------------------------\n";
 
-		solAssert(false, "Failed to parse inline assembly block.");
+		solAssert(false, message);
 	}
 
 	assembly::AsmAnalysisInfo analysisInfo;
